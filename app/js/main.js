@@ -4,6 +4,7 @@ var ale=function(){
 	}
 	var h3 = document.getElementsByTagName("h3");
 	console.log(h3);
+	console.log();
 }
 //alert
 ale();

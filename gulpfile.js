@@ -10,7 +10,7 @@ var uglify = require('gulp-uglify-cli');//压缩js
 var imgmin = require('gulp-imagemin');//压缩图片
 var cssmin = require('gulp-cssmin');//压缩css
 var htmlmin = require('gulp-htmlmin');//压缩html
-var processhtml = require('gulp-processhtml');
+var processhtml = require('gulp-processhtml');//修改html中引入的文件名
 
 var fs = require("fs");
 var json = JSON.parse(fs.readFileSync('./package.json'));
@@ -29,7 +29,6 @@ gulp.task('rename',function(){
 	}))
 	.pipe(gulp.dest('./images'));
 })
-
 
 //-------------开发环境
 //html
