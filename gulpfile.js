@@ -16,6 +16,10 @@ var fs = require("fs");
 var json = JSON.parse(fs.readFileSync('./package.json'));
 var cssstyle = json.css;
 
+if(cssstyle!=='styl' && cssstyle!=='less' && cssstyle!=='sass' && cssstyle!=='css'){
+	cssstyle = 'css';
+	console.log("请检查是否使用前端预处理工具");
+}
 //重写图片文件名
 gulp.task('rename',function(){
 	var i=1;

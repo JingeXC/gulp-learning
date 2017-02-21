@@ -26,5 +26,5 @@
     "gulp-uglify": "^2.0.1",
     "gulp-uglify-cli": "^0.1.7"
   },
-  "css": "styl"
+  "css": ""
 }
