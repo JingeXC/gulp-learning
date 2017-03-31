@@ -1,10 +1,17 @@
-var ale=function(){
-	for(var i=0;i<10;i++){
-		console.log(i);
-	}
-	var h3 = document.getElementsByTagName("h3");
-	console.log(h3);
-	console.log();
-}
-//alert
-ale();
+var drive = (function () {
+    function drive() {
+        this["do"] = function () {
+            return this.kilometres / this.speed;
+        };
+    }
+    return drive;
+}());
+var buyOrNot = function (car) {
+    if (car.price > 16) {
+        return false;
+    }
+    else {
+        return true;
+    }
+};
+console.log(buyOrNot({ price: 15 }));

@@ -6,6 +6,8 @@ var gulp = require("gulp");
 // var connect = require("gulp-connect");
 // var livereload = require('gulp-livereload');
 
+var ts = require("gulp-typescript");
+
 // var uglify = require('gulp-uglify-cli');//压缩js
 // var imgmin = require('gulp-imagemin');//压缩图片
 // var cssmin = require('gulp-cssmin');//压缩css
@@ -57,6 +59,15 @@ gulp.task('css',function(){
 	gulp.src('./app/css/*.css')
 	.pipe($.livereload());
 })
+//typescript
+gulp.task('ts',function(){
+	return gulp.src('./app/js/*.ts')
+	.pipe(ts({
+		noImplicitAny:true,
+		out:'main.js'
+	}))
+	.pipe(gulp.dest('./app/js/'))
+})
 //javascript
 gulp.task('js',function(){
 	gulp.src('./app/js/*.js')
@@ -76,6 +87,7 @@ gulp.task('watch',function(){
 	gulp.watch(['./app/css/*.'+cssstyle],[cssstyle]);
 	gulp.watch(['./app/css/*.css'],['css']);
 	gulp.watch(['./app/js/*.js'],['js']);
+	gulp.watch(['./app/js/*.ts'],['ts']);
 	$.livereload.listen();
 })
 
@@ -111,5 +123,5 @@ gulp.task('htmlmin',function(){
 	.pipe(gulp.dest('dist'));
 })
 
-gulp.task('start',['server','watch',cssstyle]);
+gulp.task('start',['server','watch',cssstyle,'ts']);
 gulp.task('build',['minifyjs','imgmin','cssmin','htmlmin']);
