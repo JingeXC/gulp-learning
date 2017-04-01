@@ -9,6 +9,7 @@ var gulp = require("gulp");
 var ts = require("gulp-typescript");
 var gulpJade = require("gulp-jade");
 var jade = require("jade");
+var cmd = require("node-cmd");
 
 // var uglify = require('gulp-uglify-cli');//压缩js
 // var imgmin = require('gulp-imagemin');//压缩图片
@@ -59,7 +60,8 @@ gulp.task('mkdir',function(){
 	})
 });
 //加载模板文件
-gulp.task('jade',function(){
+//加载html
+gulp.task('addHtml',function(){
 	gulp.src('./lib/*.jade')
 	.pipe(gulpJade({
 		jade:jade,
@@ -67,7 +69,6 @@ gulp.task('jade',function(){
 	})).
 	pipe(gulp.dest('./app/'));
 })
-
 //-------------开发环境
 //html
 gulp.task('html', function () {
@@ -96,12 +97,12 @@ gulp.task('css',function(){
 })
 //typescript
 gulp.task('ts',function(){
-	return gulp.src('./app/js/*.ts')
+	gulp.src('./app/js/*.ts')
 	.pipe(ts({
 		noImplicitAny:true,
 		out:'main.js'
 	}))
-	.pipe(gulp.dest('./app/js/'))
+	.pipe(gulp.dest('./app/js'))
 })
 //javascript
 gulp.task('js',function(){
@@ -121,8 +122,8 @@ gulp.task('watch',function(){
 	gulp.watch(['./app/*.html'],['html']);
 	gulp.watch(['./app/css/*.'+cssstyle],[cssstyle]);
 	gulp.watch(['./app/css/*.css'],['css']);
-	gulp.watch(['./app/js/*.js'],['js']);
 	gulp.watch(['./app/js/*.ts'],['ts']);
+	gulp.watch(['./app/js/*.js'],['js']);
 	$.livereload.listen();
 })
 

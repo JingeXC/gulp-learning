@@ -30,7 +30,8 @@
     "gulp-uglify": "^2.0.1",
     "gulp-uglify-cli": "^0.1.7",
     "jade": "^1.11.0",
+    "node-cmd": "^2.0.0",
     "typescript": "^2.2.2"
   },
-  "css": ""
+  "css": "less"
 }
