@@ -7,6 +7,8 @@ var gulp = require("gulp");
 // var livereload = require('gulp-livereload');
 
 var ts = require("gulp-typescript");
+var gulpJade = require("gulp-jade");
+var jade = require("jade");
 
 // var uglify = require('gulp-uglify-cli');//压缩js
 // var imgmin = require('gulp-imagemin');//压缩图片
@@ -31,6 +33,39 @@ gulp.task('rename',function(){
 		path.basename = i++;
 	}))
 	.pipe(gulp.dest('./images'));
+})
+
+//-------------创建项目骨架
+//创建文件目录
+gulp.task('mkdir',function(){
+	fs.readdir('.',function(err,files){
+		let hasFloder = false;
+		let folderArry = ['app','app/css','app/js','app/images'];
+		for(let folder of files){
+			if(folder==='app'){
+				hasFloder=true;
+				console.log('You have been build folder');
+			}
+		}
+		if(!hasFloder){
+			(function(array){
+				for(fold of array){
+					fs.mkdir(fold,function(err){
+						console.log(err);
+					})
+				}
+			})(folderArry);
+		}
+	})
+});
+//加载模板文件
+gulp.task('jade',function(){
+	gulp.src('./lib/*.jade')
+	.pipe(gulpJade({
+		jade:jade,
+		pretty:true
+	})).
+	pipe(gulp.dest('./app/'));
 })
 
 //-------------开发环境
@@ -123,5 +158,6 @@ gulp.task('htmlmin',function(){
 	.pipe(gulp.dest('dist'));
 })
 
-gulp.task('start',['server','watch',cssstyle,'ts']);
+gulp.task('start',['mkdir']);
+gulp.task('serve',['server','watch',cssstyle,'ts']);
 gulp.task('build',['minifyjs','imgmin','cssmin','htmlmin']);
