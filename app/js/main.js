@@ -1,56 +1,98 @@
-var canvas = document.getElementById('main-panel');
-var ctx = canvas.getContext('2d');
-var panelWidth = canvas.width = window.innerWidth;
-var panelHeight = canvas.height = window.innerHeight;
-var ballR = 100;
-var ballArr = [];
-var xPosition;
-var outPanel = document.querySelector("body");
-outPanel.onmousemove = function (e) {
-    xPosition = e.clientX;
-};
-var balls = (function () {
-    function balls() {
-        this.r = Math.floor(Math.random() * 50);
-        this.red = Math.floor(Math.random() * 255);
-        this.green = Math.floor(Math.random() * 255);
-        this.blue = Math.floor(Math.random() * 255);
-        this.opacity = Math.floor(Math.random() * 10) / 10;
-        this.positionX = Math.floor(Math.random() * panelWidth);
-        //positionX=xPosition?xPosition:Math.floor(Math.random()*panelWidth);
-        //positionY = Math.floor(Math.random()*panelHeight);
-        this.positionY = panelHeight;
-        this.drawBall = function () {
-            var color = "rgba(" + this.red + "," + this.green + "," + this.blue + "," + this.opacity + ")";
-            var Y = this.positionY;
+var panel = document.getElementById("main-panel");
+var ctx = panel.getContext('2d');
+var width = panel.width = window.innerWidth;
+var height = panel.height = window.innerHeight;
+var lineWidth = 0.3;
+var backgroundColor = "rgba(0,0,0,1)";
+var linePoints = 30;
+var lineAmount = 30;
+var createTime = 500;
+var blurWidth = 10;
+var lineArr = [];
+var line = (function () {
+    function line() {
+        this.pointQuantity = Math.floor(Math.random() * linePoints) + 2;
+        this.startPointX = Math.floor(Math.random() * width);
+        this.startPointY = Math.floor(Math.random() * height);
+        this.point = new Array();
+        this.drawLine = function (startX, startY, point) {
+            if (startX === void 0) { startX = this.startPointX; }
+            if (startY === void 0) { startY = this.startPointY; }
+            if (point === void 0) { point = this.point; }
             ctx.beginPath();
-            ctx.arc(this.positionX, Y, this.r, 0, 2 * Math.PI, true);
-            ctx.fillStyle = color;
+            ctx.moveTo(startX, startY);
+            for (var i = 0; i < this.pointQuantity; i++) {
+                ctx.lineTo(point[i][0], point[i][1]);
+            }
             ctx.closePath();
-            ctx.fill();
+            ctx.strokeStyle = this.color;
+            ctx.shadowColor = "white";
+            ctx.shadowBlur = blurWidth;
+            ctx.lineWidth = lineWidth;
+            ctx.stroke();
         };
+        this.animate = function () {
+            for (var i = 0; i < this.point.length; i++) {
+                switch (i % 4) {
+                    case 0:
+                        this.point[i][0] += 1;
+                        this.point[i][1] += 1;
+                        break;
+                    case 1:
+                        this.point[i][0] -= 1;
+                        this.point[i][1] += 1;
+                        break;
+                    case 2:
+                        this.point[i][0] += 1;
+                        this.point[i][1] -= 1;
+                        break;
+                    case 3:
+                        this.point[i][0] -= 1;
+                        this.point[i][1] -= 1;
+                        break;
+                }
+            }
+            if (this.startPointX > width / 2) {
+                this.startPointX++;
+            }
+            else {
+                this.startPointX--;
+            }
+            if (this.startPointY > height / 2) {
+                this.startPointY++;
+            }
+            else {
+                this.startPointY--;
+            }
+            this.drawLine(this.startPointX, this.startPointY, this.point);
+        };
+        for (var i = 0; i < this.pointQuantity; i++) {
+            this.point[this.point.length] = [Math.floor(Math.random() * width), Math.floor(Math.random() * height)];
+        }
+        this.color = "rgb(" + (Math.floor(Math.random() * 55) + 200) + "," + (Math.floor(Math.random() * 55) + 200) + "," + (Math.floor(Math.random() * 55) + 200) + ")";
     }
-    return balls;
+    return line;
 }());
 setInterval(function () {
-    var ball = new balls();
-    ballArr.push(ball);
-    if (ballArr.length >= 100) {
-        ballArr.shift();
+    var Line = new line();
+    lineArr.push(Line);
+    if (lineArr.length > lineAmount) {
+        lineArr.shift();
     }
-}, 50);
+}, createTime);
 setInterval(function () {
-    ctx.clearRect(0, 0, panelWidth, panelHeight);
-    for (var _i = 0, ballArr_1 = ballArr; _i < ballArr_1.length; _i++) {
-        var ball = ballArr_1[_i];
-        if (ball.opacity > 0) {
-            ball.opacity -= 0.005;
-        }
-        else {
-            ball.opacity = 0;
-        }
-        ball.r += 0.6;
-        ball.positionY -= 5;
-        ball.drawBall();
+    ctx.clearRect(0, 0, width, height);
+    (function () {
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, height);
+        ctx.lineTo(width, height);
+        ctx.lineTo(width, 0);
+        ctx.strokeStyle = backgroundColor;
+        ctx.fill();
+    })();
+    for (var _i = 0, lineArr_1 = lineArr; _i < lineArr_1.length; _i++) {
+        var line_1 = lineArr_1[_i];
+        line_1.animate();
     }
 }, 20);
