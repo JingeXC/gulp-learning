@@ -2,84 +2,61 @@ var panel = document.getElementById("main-panel");
 var ctx = panel.getContext('2d');
 var width = panel.width = window.innerWidth;
 var height = panel.height = window.innerHeight;
-var lineWidth = 0.3;
 var backgroundColor = "rgba(0,0,0,1)";
-var linePoints = 30;
-var lineAmount = 30;
-var createTime = 500;
-var blurWidth = 10;
-var lineArr = [];
-var line = (function () {
-    function line() {
-        this.pointQuantity = Math.floor(Math.random() * linePoints) + 2;
-        this.startPointX = Math.floor(Math.random() * width);
-        this.startPointY = Math.floor(Math.random() * height);
+var starArr = [];
+var star = (function () {
+    function star() {
+        this.pointQuantity = 20; //Math.floor(Math.random()*20)+2;
         this.point = new Array();
-        this.drawLine = function (startX, startY, point) {
-            if (startX === void 0) { startX = this.startPointX; }
-            if (startY === void 0) { startY = this.startPointY; }
-            if (point === void 0) { point = this.point; }
-            ctx.beginPath();
-            ctx.moveTo(startX, startY);
-            for (var i = 0; i < this.pointQuantity; i++) {
-                ctx.lineTo(point[i][0], point[i][1]);
+        this.drawArc = function (points) {
+            if (points === void 0) { points = this.point; }
+            for (var _i = 0, points_1 = points; _i < points_1.length; _i++) {
+                var point = points_1[_i];
+                ctx.beginPath();
+                ctx.arc(point[0], point[1], this.r, 0, Math.PI * 2, true);
+                ctx.closePath();
+                ctx.fillStyle = this.color;
+                ctx.fill();
             }
-            ctx.closePath();
-            ctx.strokeStyle = this.color;
-            ctx.shadowColor = "white";
-            ctx.shadowBlur = blurWidth;
-            ctx.lineWidth = lineWidth;
-            ctx.stroke();
         };
         this.animate = function () {
             for (var i = 0; i < this.point.length; i++) {
-                switch (i % 4) {
-                    case 0:
-                        this.point[i][0] += 1;
-                        this.point[i][1] += 1;
-                        break;
-                    case 1:
-                        this.point[i][0] -= 1;
-                        this.point[i][1] += 1;
-                        break;
-                    case 2:
-                        this.point[i][0] += 1;
-                        this.point[i][1] -= 1;
-                        break;
-                    case 3:
-                        this.point[i][0] -= 1;
-                        this.point[i][1] -= 1;
-                        break;
+                var xh = this.point[i][0] - width / 2;
+                var yh = this.point[i][1] - height / 2;
+                if (xh > 0 && yh > 0) {
+                    this.point[i][0] += yh / xh;
+                    this.point[i][1] += xh / yh;
+                }
+                else if (xh < 0 && yh < 0) {
+                    this.point[i][0] -= yh / xh;
+                    this.point[i][1] -= xh / yh;
+                }
+                else if (xh < 0 && yh > 0) {
+                    this.point[i][0] += yh / xh;
+                    this.point[i][1] -= xh / yh;
+                }
+                else {
+                    this.point[i][0] -= yh / xh;
+                    this.point[i][1] += xh / yh;
                 }
             }
-            if (this.startPointX > width / 2) {
-                this.startPointX++;
-            }
-            else {
-                this.startPointX--;
-            }
-            if (this.startPointY > height / 2) {
-                this.startPointY++;
-            }
-            else {
-                this.startPointY--;
-            }
-            this.drawLine(this.startPointX, this.startPointY, this.point);
+            this.drawArc(this.point);
         };
         for (var i = 0; i < this.pointQuantity; i++) {
             this.point[this.point.length] = [Math.floor(Math.random() * width), Math.floor(Math.random() * height)];
         }
-        this.color = "rgb(" + (Math.floor(Math.random() * 55) + 200) + "," + (Math.floor(Math.random() * 55) + 200) + "," + (Math.floor(Math.random() * 55) + 200) + ")";
+        this.color = "rgb(" + (Math.floor(Math.random() * 155) + 100) + "," + (Math.floor(Math.random() * 155) + 100) + "," + (Math.floor(Math.random() * 155) + 100) + ")";
+        this.r = Math.floor(Math.random() * 5) + 1;
     }
-    return line;
+    return star;
 }());
 setInterval(function () {
-    var Line = new line();
-    lineArr.push(Line);
-    if (lineArr.length > lineAmount) {
-        lineArr.shift();
+    var Star = new star();
+    starArr.push(Star);
+    if (starArr.length > 20) {
+        starArr.shift();
     }
-}, createTime);
+}, 20);
 setInterval(function () {
     ctx.clearRect(0, 0, width, height);
     (function () {
@@ -88,11 +65,11 @@ setInterval(function () {
         ctx.lineTo(0, height);
         ctx.lineTo(width, height);
         ctx.lineTo(width, 0);
-        ctx.strokeStyle = backgroundColor;
+        ctx.fillStyle = backgroundColor;
         ctx.fill();
     })();
-    for (var _i = 0, lineArr_1 = lineArr; _i < lineArr_1.length; _i++) {
-        var line_1 = lineArr_1[_i];
-        line_1.animate();
+    for (var _i = 0, starArr_1 = starArr; _i < starArr_1.length; _i++) {
+        var star_1 = starArr_1[_i];
+        star_1.animate();
     }
 }, 20);

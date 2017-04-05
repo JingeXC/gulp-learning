@@ -2,91 +2,69 @@ const panel:any = document.getElementById("main-panel");
 const ctx:any = panel.getContext('2d');
 const width:number = panel.width = window.innerWidth;
 const height:number = panel.height = window.innerHeight;
-const lineWidth:number=0.3;
-const backgroundColor:string ="rgba(0,0,0,1)";
-const linePoints:number = 30;
-const lineAmount:number = 30;
-const createTime:number = 500;
-const blurWidth:number = 10;
+const backgroundColor:string="rgba(0,0,0,1)";
 
-let lineArr:any=[];
+let starArr:any=[];
 
 
-interface linePro{
+interface starPro{
 	pointQuantity:number;
-	startPointX:number;
-	startPointY:number;
 	point:any[];
 	color:any;
+	r:number;
 }
-class line implements linePro{
-	pointQuantity:number=Math.floor(Math.random()*linePoints)+2;
-	startPointX:number=Math.floor(Math.random()*width);
-	startPointY:number=Math.floor(Math.random()*height);
+class star implements starPro{
+	pointQuantity:number=20;//Math.floor(Math.random()*20)+2;
 	point=new Array();
 	color:any;
+	r:number;
 	constructor(){
 		for(let i=0;i<this.pointQuantity;i++){
 			this.point[this.point.length]=[Math.floor(Math.random()*width),Math.floor(Math.random()*height)];
 		}
-		this.color=`rgb(${Math.floor(Math.random()*55)+200},${Math.floor(Math.random()*55)+200},${Math.floor(Math.random()*55)+200})`;
+		this.color=`rgb(${Math.floor(Math.random()*155)+100},${Math.floor(Math.random()*155)+100},${Math.floor(Math.random()*155)+100})`;
+		this.r=Math.floor(Math.random()*5)+1;
 	}
-	drawLine=function(startX:number=this.startPointX,startY:number=this.startPointY,point:any=this.point){
-		ctx.beginPath();
-		ctx.moveTo(startX,startY);
-		for(let i = 0;i<this.pointQuantity;i++){
-			ctx.lineTo(point[i][0],point[i][1]);
+	drawArc=function(points:any=this.point){
+		for(let point of points){
+			ctx.beginPath();
+			ctx.arc(point[0],point[1],this.r,0,Math.PI*2,true);
+			ctx.closePath();
+			ctx.fillStyle=this.color;
+			ctx.fill();
 		}
-		ctx.closePath();
-		ctx.strokeStyle=this.color;
-		ctx.shadowColor="white";
-		ctx.shadowBlur=blurWidth;
-		ctx.lineWidth=lineWidth;
-		ctx.stroke();
 	}
 	animate=function(){
-		for(let i=0;i<this.point.length;i++){
-			switch (i%4) {
-				case 0:
-					this.point[i][0]+=1;
-					this.point[i][1]+=1;
-					break;
-				case 1:
-					this.point[i][0]-=1;
-					this.point[i][1]+=1;
-					break;
-				case 2:
-					this.point[i][0]+=1;
-					this.point[i][1]-=1;
-					break;
-				case 3:
-					this.point[i][0]-=1;
-					this.point[i][1]-=1;
-					break;
+		for(let i=0;i< this.point.length;i++){
+			var xh=this.point[i][0]-width/2;
+			var yh=this.point[i][1]-height/2;
+			if(xh>0 && yh>0){
+				this.point[i][0]+=yh/xh;
+				this.point[i][1]+=xh/yh;
+			}else if(xh<0 && yh<0){
+				this.point[i][0]-=yh/xh;
+				this.point[i][1]-=xh/yh;
+			}else if(xh<0 && yh>0){
+				this.point[i][0]+=yh/xh;
+				this.point[i][1]-=xh/yh;
+			}else{
+				this.point[i][0]-=yh/xh;
+				this.point[i][1]+=xh/yh;
 			}
 		}
-		if(this.startPointX>width/2){
-			this.startPointX++;
-		}else{
-			this.startPointX--;
-		}
-		if(this.startPointY>height/2){
-			this.startPointY++;
-		}else{
-			this.startPointY--;
-		}
-		this.drawLine(this.startPointX,this.startPointY,this.point);
+		
+		this.drawArc(this.point);
 	}
 }
 
 
 setInterval(function(){
-	var Line = new line();
-	lineArr.push(Line);
-	if(lineArr.length>lineAmount){
-		lineArr.shift();
+	var Star = new star();
+	starArr.push(Star);
+	if(starArr.length>20){
+		starArr.shift();
 	}
-},createTime);
+},20);
 
 setInterval(function(){
 	ctx.clearRect(0,0,width,height);
@@ -96,10 +74,10 @@ setInterval(function(){
 		ctx.lineTo(0,height);
 		ctx.lineTo(width,height);
 		ctx.lineTo(width,0)
-		ctx.strokeStyle=backgroundColor;
+		ctx.fillStyle=backgroundColor;
 		ctx.fill();
 	})();
-	for(let line of lineArr){
-		line.animate();
+	for(let star of starArr){
+		star.animate();
 	}
 },20)
