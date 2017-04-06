@@ -25,7 +25,7 @@ class star implements starPro{
 			this.point[this.point.length]=[Math.floor(Math.random()*width),Math.floor(Math.random()*height)];
 		}
 		this.color=`rgb(${Math.floor(Math.random()*155)+100},${Math.floor(Math.random()*155)+100},${Math.floor(Math.random()*155)+100})`;
-		this.r=Math.random()*2;
+		this.r=Math.random()*10;
 	}
 	drawArc=function(points:any=this.point){
 		for(let point of points){
