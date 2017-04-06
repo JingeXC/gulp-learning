@@ -4,6 +4,8 @@ const width:number = panel.width = window.innerWidth;
 const height:number = panel.height = window.innerHeight;
 const backgroundColor:string="rgba(0,0,0,1)";
 
+
+
 let starArr:any=[];
 
 
@@ -14,7 +16,7 @@ interface starPro{
 	r:number;
 }
 class star implements starPro{
-	pointQuantity:number=20;//Math.floor(Math.random()*20)+2;
+	pointQuantity:number=Math.floor(Math.random()*40)+2;
 	point=new Array();
 	color:any;
 	r:number;
@@ -23,7 +25,7 @@ class star implements starPro{
 			this.point[this.point.length]=[Math.floor(Math.random()*width),Math.floor(Math.random()*height)];
 		}
 		this.color=`rgb(${Math.floor(Math.random()*155)+100},${Math.floor(Math.random()*155)+100},${Math.floor(Math.random()*155)+100})`;
-		this.r=Math.floor(Math.random()*5)+1;
+		this.r=Math.random()*2;
 	}
 	drawArc=function(points:any=this.point){
 		for(let point of points){
@@ -31,26 +33,15 @@ class star implements starPro{
 			ctx.arc(point[0],point[1],this.r,0,Math.PI*2,true);
 			ctx.closePath();
 			ctx.fillStyle=this.color;
+			//ctx.shadowColor="white";
+			//ctx.shadowBlur=10;
 			ctx.fill();
 		}
 	}
 	animate=function(){
 		for(let i=0;i< this.point.length;i++){
-			var xh=this.point[i][0]-width/2;
-			var yh=this.point[i][1]-height/2;
-			if(xh>0 && yh>0){
-				this.point[i][0]+=yh/xh;
-				this.point[i][1]+=xh/yh;
-			}else if(xh<0 && yh<0){
-				this.point[i][0]-=yh/xh;
-				this.point[i][1]-=xh/yh;
-			}else if(xh<0 && yh>0){
-				this.point[i][0]+=yh/xh;
-				this.point[i][1]-=xh/yh;
-			}else{
-				this.point[i][0]-=yh/xh;
-				this.point[i][1]+=xh/yh;
-			}
+			this.point[i][0]+=0.1;
+			this.point[i][1]+=(i+1)*0.5;
 		}
 		
 		this.drawArc(this.point);
@@ -64,7 +55,7 @@ setInterval(function(){
 	if(starArr.length>20){
 		starArr.shift();
 	}
-},20);
+},200);
 
 setInterval(function(){
 	ctx.clearRect(0,0,width,height);
