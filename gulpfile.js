@@ -6,10 +6,12 @@ var gulp = require("gulp");
 // var connect = require("gulp-connect");
 // var livereload = require('gulp-livereload');
 
-var ts = require("gulp-typescript");
 var gulpJade = require("gulp-jade");
 var jade = require("jade");
-var cmd = require("node-cmd");
+var source = require("vinyl-source-stream");
+var browserify = require("browserify");
+var watchify = require("watchify");
+var tsify = require("tsify");
 
 // var uglify = require('gulp-uglify-cli');//压缩js
 // var imgmin = require('gulp-imagemin');//压缩图片
@@ -96,14 +98,20 @@ gulp.task('css',function(){
 	.pipe($.livereload());
 })
 //typescript
-gulp.task('ts',function(){
-	gulp.src('./app/js/*.ts')
-	.pipe(ts({
-		noImplicitAny:true,
-		out:'main.js'
-	}))
-	.pipe(gulp.dest('./app/js'))
+gulp.task('tswork',function(){
+	return browserify({
+		basedir:'./app',
+		debug:true,
+		entries:['js/main.ts'],
+		cache:{},
+		packageCache:{}
+	})
+	.plugin(tsify)
+	.bundle()
+	.pipe(source('bundle.js'))
+	.pipe(gulp.dest('./app/js'));
 })
+
 //javascript
 gulp.task('js',function(){
 	gulp.src('./app/js/*.js')
@@ -122,7 +130,7 @@ gulp.task('watch',function(){
 	gulp.watch(['./app/*.html'],['html']);
 	gulp.watch(['./app/css/*.'+cssstyle],[cssstyle]);
 	gulp.watch(['./app/css/*.css'],['css']);
-	gulp.watch(['./app/js/*.ts'],['ts']);
+	gulp.watch(['./app/js/*.ts'],['tswork']);
 	gulp.watch(['./app/js/*.js'],['js']);
 	$.livereload.listen();
 })
@@ -160,5 +168,5 @@ gulp.task('htmlmin',function(){
 })
 
 gulp.task('start',['mkdir']);
-gulp.task('serve',['server','watch',cssstyle,'ts']);
+gulp.task('serve',['server','watch',cssstyle,'tswork']);
 gulp.task('build',['minifyjs','imgmin','cssmin','htmlmin']);

@@ -1,0 +1,10 @@
+{
+	"files":[
+		"js/main.js",
+		"js/model.js"
+	],
+	"comilerOption":{
+		"noImplicitAny":true,
+		"target":"es5"
+	}
+}

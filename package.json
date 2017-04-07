@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "browserify": "^14.3.0",
     "gulp": "^3.9.1",
     "gulp-connect": "^5.0.0",
     "gulp-cssmin": "^0.1.7",
@@ -29,9 +30,13 @@
     "gulp-typescript": "^3.1.6",
     "gulp-uglify": "^2.0.1",
     "gulp-uglify-cli": "^0.1.7",
+    "gulp-util": "^3.0.8",
     "jade": "^1.11.0",
     "node-cmd": "^2.0.0",
-    "typescript": "^2.2.2"
+    "tsify": "^3.0.1",
+    "typescript": "^2.2.2",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.9.0"
   },
   "css": "less"
 }
