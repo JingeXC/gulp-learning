@@ -38,8 +38,8 @@ class point implements pointProtype{
 		ctx.fill();
 	}
 	animation(){
-		this.opacity-=0.01;
-		this.positionx+=5;
+		//this.opacity-=0.01;
+		this.positionx-=5;
 		this.drawPoint();
 	}
 }
@@ -51,19 +51,22 @@ class letters{
 	}
 	drawLetter(le:string){
 		const letterBox = new box();
-		let wordArr = le.split("");
+		let wordArr = le.toUpperCase().split("");
 		let toWord = letterBox[wordArr[0]];
 		for(let j=1;j<wordArr.length;j++){
 			for(let i=0;i<letterBox[wordArr[j]].length;i++){
-				toWord[i]=toWord[i].concat(letterBox[wordArr[j]][i]);
+				let createLetter = new box();
+				let num:any = createLetter[wordArr[j]][i];
+				toWord[i]=toWord[i].concat(num);
 			}
 		}
 		this.text= toWord;
+		
 		for(let i=0;i<this.text.length;i++){
 			for(let j=0;j<this.text[i].length;j++){
 				if(this.text[i][j]===1){
 					let points = new point();
-					points.positionx=(j+1)*26;
+					points.positionx=(j+1)*26+panelWidth;
 					points.positiony=(i+1)*26;
 					this.pointArr.push(points);
 				}
@@ -79,6 +82,43 @@ class letters{
 		}
 	}
 }
+
+
+let showContent:string="enter words";
+const button:any = document.querySelector(".button");
+let timer:any;
+button.onclick=function(){
+	clearInterval(timer);
+	const input:any = document.querySelector("#words");
+	let inputWord:string = input.value;
+	showContent=inputWord;
+	interStart();
+}
+const start=function(){
+	let letter = new letters();
+	letter.drawLetter(showContent);
+	if(letterArr.length>=3){
+		letterArr.shift();
+	}
+	letterArr.push(letter);
+}
+const interStart = function(){
+	start()
+	timer =setInterval(function(){
+		start();
+	},12000);
+}
+
+interStart();
+
+setInterval(()=>{
+	ctx.clearRect(0,0,panelWidth,panelHeight);
+	for(let item of letterArr){
+		item.showAnim();
+	}
+},20);
+
+
 
 //自动滚动文字
 //const text:string[]=["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
@@ -100,29 +140,32 @@ class letters{
 // 	}
 // },20);
 
-const button:any = document.querySelector(".button");
-let timer:any;
-button.onclick=function(){
-	clearInterval(timer);
-	let elem:any=document.querySelector("#words");
-	let word:string=elem.value.toUpperCase();
+
+//输入显示
+
+// const button:any = document.querySelector(".button");
+// let timer:any;
+// button.onclick=function(){
+// 	clearInterval(timer);
+// 	let elem:any=document.querySelector("#words");
+// 	let word:string=elem.value;
 	
 	
-	let letter = new letters();
-	if(!word){
-		word="ERROR";
-	}
-	letter.drawLetter(word);
-	timer=setInterval(()=>{
-		ctx.clearRect(0,0,panelWidth,panelHeight);
-		letter.showAnim();
-		// for(let item of letterArr){
-		// 	item[0].showAnim();
-		// }
-		if(letter.pointArr[0].opacity<0){
-			clearInterval(timer);
-		}
-	},20);
-}
+// 	let letter = new letters();
+// 	if(!word){
+// 		word="ERROR";
+// 	}
+// 	letter.drawLetter(word);
+// 	timer=setInterval(()=>{
+// 		ctx.clearRect(0,0,panelWidth,panelHeight);
+// 		letter.showAnim();
+// 		// for(let item of letterArr){
+// 		// 	item[0].showAnim();
+// 		// }
+// 		if(letter.pointArr[0].opacity<0){
+// 			clearInterval(timer);
+// 		}
+// 	},20);
+// }
 
 
