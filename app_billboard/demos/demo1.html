@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		#myDiv{
+			background:#000;
+			width:10%;
+			height:200px;
+			position: fixed;
+		}
+	</style>
+</head>
+<body>
+	<div id="myDiv"></div>
+	<script>
+		var div = document.getElementById("myDiv");
+		div.style.width="1%";
+		function updateProgress(){
+			var div = document.getElementById("myDiv");
+
+			div.style.width=(parseInt(div.style.width,10)+1)+"%";
+
+			if(div.style.left!="100%"){
+				requestAnimationFrame(updateProgress);
+			}
+		}
+		requestAnimationFrame(updateProgress);
+	</script>
+</body>
+</html>

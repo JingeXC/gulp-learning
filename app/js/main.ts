@@ -1,171 +1,83 @@
-import {box} from './model';
-const canvas:any = document.querySelector("#main-panel");
+// window.requestAnimationFrame=(function(){
+// 	return window.requestAnimationFrame ||
+// 			window.webkitRequestAnimationFrame ||
+// 			window.mozRequestAnimationFrame ||
+// 			function(callback){
+// 				window.setTimeout(callback,1000/60);
+// 			}
+// })
+const canvas:any = document.getElementById("main-panel");
 const ctx:any = canvas.getContext("2d");
 
-const panelWidth= canvas.width=window.innerWidth;
-const panelHeight = canvas.height=400;
+const screenWidth:number=canvas.width = window.innerWidth;
+const screenHeight:number = canvas.height = window.innerHeight;
 
-const letterArr:any[]=[];
+let lines:any[]=[];
 
-
-interface pointProtype {
-	r:number;
-	red:number;
-	blue:number;
-	green:number;
-	opacity:number;
-	radius:number;
-	positionx:number;
-	positiony:number;
-}
-class point implements pointProtype{
-	r=10;
-	red=0;
-	blue=0;
-	green=0;
-	opacity=1;
-	radius=Math.PI*2;
-	positionx:number;
-	positiony:number;
+class startLines{
+	positionx:number =-200;
+	positiony:number =0;
+	r:number = Math.floor(Math.random()*(screenWidth-250))+250;
+	startRadio:number=-(Math.random()*Math.PI/8+Math.PI/8);
+	endRadio:number=0;
+	red:number=Math.floor(Math.random()*155)+100;
+	green:number=Math.floor(Math.random()*155)+100;
+	blue:number=Math.floor(Math.random()*155)+100;
+	//opacity:number=Math.floor(Math.random()*10)/10;
+	opacity:number=1;
+	lineWidth:number=Math.floor(Math.random()*6)+2;
+	speed:number = (Math.random()*Math.PI+Math.PI)/this.r;
 	constructor(){
-		
 	}
-	drawPoint(){
+	drawStart(){
+
+		let color = `rgba(${this.red},${this.green},${this.blue},${this.opacity})`;
 		ctx.beginPath();
-		ctx.arc(this.positionx,this.positiony,this.r,0,this.radius,true);
-		ctx.fillStyle=`rgba(${this.red},${this.green},${this.blue},${this.opacity})`;
-		ctx.closePath();
-		ctx.fill();
+		ctx.lineWidth= this.lineWidth;
+		ctx.arc(this.positionx,this.positiony,this.r,this.startRadio,this.endRadio);
+		ctx.strokeStyle=color;
+		ctx.stroke();
 	}
-	animation(){
-		//this.opacity-=0.01;
-		this.positionx-=5;
-		this.drawPoint();
-	}
-}
-class letters{
-	pointArr:any[]=[];
-	private text:any;
-	constructor(){
-		
-	}
-	drawLetter(le:string){
-		const letterBox = new box();
-		let wordArr = le.toUpperCase().split("");
-		let toWord = letterBox[wordArr[0]];
-		for(let j=1;j<wordArr.length;j++){
-			for(let i=0;i<letterBox[wordArr[j]].length;i++){
-				let createLetter = new box();
-				let num:any = createLetter[wordArr[j]][i];
-				toWord[i]=toWord[i].concat(num);
-			}
-		}
-		this.text= toWord;
-		
-		for(let i=0;i<this.text.length;i++){
-			for(let j=0;j<this.text[i].length;j++){
-				if(this.text[i][j]===1){
-					let points = new point();
-					points.positionx=(j+1)*26+panelWidth;
-					points.positiony=(i+1)*26;
-					this.pointArr.push(points);
-				}
-			}
-		}
-		for(let item of this.pointArr){
-			item.drawPoint();
-		}
-	}
-	showAnim(){
-		for(let item of this.pointArr){
-			item.animation();
-		}
+	animate(){
+		this.startRadio+=this.speed;
+		this.endRadio+=this.speed;
+		this.drawStart();
 	}
 }
 
-
-let showContent:string="enter words";
-const button:any = document.querySelector(".button");
-let timer:any;
-button.onclick=function(){
-	clearInterval(timer);
-	const input:any = document.querySelector("#words");
-	let inputWord:string = input.value;
-	showContent=inputWord;
-	interStart();
-}
-const start=function(){
-	let letter = new letters();
-	letter.drawLetter(showContent);
-	if(letterArr.length>=3){
-		letterArr.shift();
+function recovery(arr,index){
+	var tempArr:any[]=[];
+	for(var i=0;i<arr.length;i++){
+		if(i!=index){
+			tempArr.push(arr[i]);
+		}
 	}
-	letterArr.push(letter);
+	return tempArr;
 }
-const interStart = function(){
-	start()
-	timer =setInterval(function(){
-		start();
-	},12000);
-}
-
-interStart();
+setInterval(function(){
+	var starLine = new startLines();
+	lines.push(starLine);
+	starLine.drawStart();
+	for(let i=0;i<lines.length;i++){
+		if(lines[i].startRadio>Math.PI){
+			lines = recovery(lines,i);
+		}
+	}
+},200)
 
 setInterval(()=>{
-	ctx.clearRect(0,0,panelWidth,panelHeight);
-	for(let item of letterArr){
-		item.showAnim();
+	ctx.clearRect(0,0,screenWidth,screenHeight);
+
+	ctx.beginPath();
+	ctx.moveTo(0,0);
+	ctx.lineTo(0,screenHeight);
+	ctx.lineTo(screenWidth,screenHeight);
+	ctx.lineTo(screenWidth,0)
+	ctx.strokeStyle="#222222";
+	ctx.closePath();
+	ctx.fill();
+
+	for(let item of lines){
+		item.animate();
 	}
-},20);
-
-
-
-//自动滚动文字
-//const text:string[]=["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
-//let index=-1;
-// setInterval(()=>{
-// 	let letter = new letters();
-// 	letterArr.push([letter,index++]);
-// 	letterArr[letterArr.length-1][0].drawLetter(text[index%26]);
-// 	console.log(letterArr[letterArr.length-1][1]);
-// 	if(letterArr.length>=3){
-// 		letterArr.shift();
-// 	}
-// },1000);
-
-// setInterval(()=>{
-// 	ctx.clearRect(0,0,panelWidth,panelHeight);
-// 	for(let item of letterArr){
-// 		item[0].showAnim();
-// 	}
-// },20);
-
-
-//输入显示
-
-// const button:any = document.querySelector(".button");
-// let timer:any;
-// button.onclick=function(){
-// 	clearInterval(timer);
-// 	let elem:any=document.querySelector("#words");
-// 	let word:string=elem.value;
-	
-	
-// 	let letter = new letters();
-// 	if(!word){
-// 		word="ERROR";
-// 	}
-// 	letter.drawLetter(word);
-// 	timer=setInterval(()=>{
-// 		ctx.clearRect(0,0,panelWidth,panelHeight);
-// 		letter.showAnim();
-// 		// for(let item of letterArr){
-// 		// 	item[0].showAnim();
-// 		// }
-// 		if(letter.pointArr[0].opacity<0){
-// 			clearInterval(timer);
-// 		}
-// 	},20);
-// }
-
-
+},1000/60);
