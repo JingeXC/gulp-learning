@@ -17,7 +17,7 @@ let lines:any[]=[];
 class startLines{
 	positionx:number =-200;
 	positiony:number =0;
-	r:number = Math.floor(Math.random()*(screenWidth-250))+250;
+	r:number = Math.floor(Math.random()*(Math.sqrt(screenHeight*screenHeight+screenWidth*screenWidth)-250))+250;
 	startRadio:number=-(Math.random()*Math.PI/8+Math.PI/8);
 	endRadio:number=0;
 	red:number=Math.floor(Math.random()*155)+100;
