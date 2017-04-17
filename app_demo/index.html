@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
+	<link rel="stylesheet" href="css/bootstrapSwitch.css">
+</head>
+<body>
+	<button class="btn">sss</button>
+	<div id="mySwitch" class="switch has-switch">
+        <div class="switch-off switch-animate"><input type="checkbox" checked=""><span class="switch-left">ON</span><label>&nbsp;</label><span class="switch-right">OFF</span></div>
+    </div>
+	<script src="http://cdn.bootcss.com/jquery/2.2.3/jquery.js"></script>
+	<script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="js/bootstrapSwitch.js"></script>
+	<script type="text/javascript">
+		$('#mySwitch').on('switch-change', function (e, data) {
+		    var $el = $(data.el)
+		      , value = data.value;
+		    console.log(e, $el, value);
+		});
+	</script>
+</body>
+</html>
