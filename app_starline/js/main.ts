@@ -12,11 +12,16 @@ let lines:any[]=[];
 let alpha:number=0;
 let beta:number=0;
 let gamma:number =0;
+let mousex:number =0;
+let mousey:number =0;
 
 let betaArr:any[]=[];
 let gammaArr:any[]=[];
+let mousexArr:any[]=[];
+let mouseyArr:any[]=[];
 
 //----------------------------
+//监听陀螺仪
 if((<any>window).DeviceOrientationEvent){
 	window.addEventListener('deviceorientation',function(e){
 		alpha= e.alpha;
@@ -24,6 +29,26 @@ if((<any>window).DeviceOrientationEvent){
 		gamma= e.gamma;
 	})
 }
+//----------------
+//监听鼠标位置
+function mousePosition(ev){
+	if(ev.pageX || ev.pageY){
+		return {x:ev.pageX,y:ev.pageY}
+	}
+	return {
+		x:ev.clientX + document.body.scrollLeft - document.body.clientLeft,
+		y:ev.clientY + document.body.scrollTop - document.body.clientTop
+	}
+}
+function mouseMove(e){
+	e = e || window.event;
+	let mousePos = mousePosition(e);
+	mousex=mousePos.x;
+	mousey=mousePos.y;
+}
+document.onmousemove = mouseMove;
+
+
 
 class startLines{
 	positionx:number =-200;
@@ -49,35 +74,68 @@ class startLines{
 		ctx.stroke();
 	}
 	animate(){
-		let speG:number=0;
-		let speB:number=0;
-		if(gammaArr[gammaArr.length-1] && gammaArr[gammaArr.length-10]){
-			speG= parseInt(gammaArr[gammaArr.length-1])-parseInt(gammaArr[gammaArr.length-10]);
-		}
-		if(betaArr[betaArr.length-1] && betaArr[betaArr.length-10]){
-			speB= parseInt(betaArr[betaArr.length-1])-parseInt(betaArr[betaArr.length-10]);
-		}
-		//showWord=`x:${this.positionx},y:${this.positiony},gamma:${gamma},beta:${beta}--${speG}---${speB}`;
-		
+		if(gamma || beta){
+			let speG:number=0;
+			let speB:number=0;
+			if(gammaArr[gammaArr.length-1] && gammaArr[gammaArr.length-10]){
+				speG= parseInt(gammaArr[gammaArr.length-1])-parseInt(gammaArr[gammaArr.length-10]);
+			}
+			if(betaArr[betaArr.length-1] && betaArr[betaArr.length-10]){
+				speB= parseInt(betaArr[betaArr.length-1])-parseInt(betaArr[betaArr.length-10]);
+			}
+			//showWord=`x:${this.positionx},y:${this.positiony},gamma:${gamma},beta:${beta}--${speG}---${speB}`;
+			
 
-		if(gammaArr.length>10){
-			if(speG<0 && this.positionx>=-250){
-				this.positionx-=2;
-			}else if(speG>0 && this.positionx<=-150){
-				this.positionx+=2;
-			}else{
-				this.positionx;
+			if(gammaArr.length>10){
+				if(speG<0 && this.positionx>=-250){
+					this.positionx-=2;
+				}else if(speG>0 && this.positionx<=-150){
+					this.positionx+=2;
+				}else{
+					this.positionx;
+				}
+			}
+			if(betaArr.length>10){
+				if(speB<0 && this.positiony >= -50){
+					this.positionx-=2;
+				}else if(speB>0 && this.positiony <=50){
+					this.positionx+=2;
+				}else{
+					this.positionx;
+				}
+			}
+		}else{
+			let spex:number=0;
+			let spey:number=0;
+			if(mousexArr[mousexArr.length-1] && mousexArr[mousexArr.length-10]){
+				spex= parseInt(mousexArr[mousexArr.length-1])-parseInt(mousexArr[mousexArr.length-10]);
+			}
+			if(mouseyArr[mouseyArr.length-1] && mouseyArr[mouseyArr.length-10]){
+				spey= parseInt(mouseyArr[mouseyArr.length-1])-parseInt(mouseyArr[mouseyArr.length-10]);
+			}
+			//showWord=`x:${this.positionx},y:${this.positiony},gamma:${gamma},beta:${beta}--${speG}---${speB}`;
+			
+
+			if(mousexArr.length>10){
+				if(spex<0 && this.positionx>=-250){
+					this.positionx-=2;
+				}else if(spex>0 && this.positionx<=-150){
+					this.positionx+=2;
+				}else{
+					this.positionx;
+				}
+			}
+			if(mouseyArr.length>10){
+				if(spey<0 && this.positiony >= -50){
+					this.positionx-=2;
+				}else if(spey>0 && this.positiony <=50){
+					this.positionx+=2;
+				}else{
+					this.positionx;
+				}
 			}
 		}
-		if(betaArr.length>10){
-			if(speB<0 && this.positiony >= -50){
-				this.positionx-=2;
-			}else if(speB>0 && this.positiony <=50){
-				this.positionx+=2;
-			}else{
-				this.positionx;
-			}
-		}
+		
 		this.startRadio+=this.speed;
 		this.endRadio+=this.speed;
 		this.drawStart();
@@ -114,6 +172,13 @@ setInterval(()=>{
 		betaArr.shift();
 		gammaArr.shift();
 	}
+	mousexArr.push(mousex);
+	mouseyArr.push(mousey);
+	if(mousexArr.length>30){
+		mousexArr.shift();
+		mouseyArr.shift();
+	}
+
 	//showBar.innerHTML=showWord+`  lastB:${betaArr[betaArr.length-1]} lastG:${gammaArr[gammaArr.length-1]}`;
 	ctx.clearRect(0,0,screenWidth,screenHeight);
 
@@ -134,7 +199,6 @@ setInterval(()=>{
 		item.animate();
 	}
 },1000/60);
-
 
 
 
